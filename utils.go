@@ -13,7 +13,10 @@ import (
 	"time"
 )
 
-// v2023-10-07.1520
+/*
+v2023-10-07.1520
+v2023-10-08.0930; fixed https://github.com/cyclone-github/crackmon/issues/3
+*/
 
 func ReadUserInput(stdin io.Writer) {
 	scanner := bufio.NewScanner(os.Stdin)
@@ -129,7 +132,9 @@ func initializeAndExecuteCommon(cmdStr string, timeT int, crackT int, re *regexp
 								fmt.Fprintf(os.Stderr, "DEBUG: Stopping, unable to read hashcat output for %d seconds.\n", missedChecks)
 							}
 							sendQ(stdin)
-							close(done)
+							time.Sleep(1 * time.Second)
+							os.Exit(1)
+							//close(done) // causes goroutine panic due to closing closed channel
 							return
 						}
 					} else {
