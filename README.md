@@ -24,11 +24,11 @@ Custom: -time 2m -crack 100
 ./crackmon -t 2 -c 100 ./hashcat {hashcat args}
 
 All flags:
-        -t              time threshold in minutes
-        -c              average cracks threshold per -t
-        -debug          enable debug output
-        -help           show this help menu
-        -version        show version info
+	-t      	minimum runtime in minutes
+	-c      	cumulative average cracks threshold
+	-debug  	enable debug output
+	-help   	show this help menu
+	-version	show version info
 ```
 For troubleshooting, run with -debug flag
 ```

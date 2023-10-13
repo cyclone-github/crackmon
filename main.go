@@ -14,7 +14,7 @@ https://github.com/cyclone-github/crackmon/blob/main/LICENSE
 
 crackmon - by cyclone
 original idea by: https://github.com/justpretending/avgdrop
-hashcat wrapper tool to similate pressing "b" key to bypass current hashcat attack if cracking rate goes below threshold
+hashcat wrapper tool to simulate pressing "b" key to bypass current hashcat attack if cracking rate goes below threshold
 developed and tested on debian 12 linux
 
 example:
