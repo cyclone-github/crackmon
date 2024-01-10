@@ -44,5 +44,13 @@ For troubleshooting, run with -debug flag
 ### Notes:
 - Compiled and tested on debian 12 and Windows 11 Terminal
 
-### Compile from source code info:
-- https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
+### Compile from source:
+- If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
+- This assumes you have Go and Git installed
+  - `git clone https://github.com/cyclone-github/crackmon.git`
+  - `cd crackmon`
+  - `go mod init crackmon`
+  - `go mod tidy`
+  - `go build -ldflags="-s -w" .`
+- Compile from source code how-to:
+  - https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
