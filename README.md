@@ -1,3 +1,5 @@
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=crackmon&theme=gruvbox)](https://github.com/cyclone-github/)
+
 # crackmon
 Hashcat wrapper tool to bypass current attack if crack rate drops below threshold.
 
