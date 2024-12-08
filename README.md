@@ -1,4 +1,10 @@
-[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=crackmon&theme=gruvbox)](https://github.com/cyclone-github/)
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=crackmon&theme=gruvbox)](https://github.com/cyclone-github/crackmon/)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/cyclone-github/crackmon)](https://goreportcard.com/report/github.com/cyclone-github/crackmon)
+[![GitHub issues](https://img.shields.io/github/issues/cyclone-github/crackmon.svg)](https://github.com/cyclone-github/crackmon/issues)
+[![License](https://img.shields.io/github/license/cyclone-github/crackmon.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/release/cyclone-github/crackmon.svg)](https://github.com/cyclone-github/crackmon/releases)
+<!-- [![Go Reference](https://pkg.go.dev/badge/github.com/cyclone-github/crackmon.svg)](https://pkg.go.dev/github.com/cyclone-github/crackmon) -->
 
 # crackmon
 Hashcat wrapper tool to bypass current attack if crack rate drops below threshold.
