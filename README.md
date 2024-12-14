@@ -9,7 +9,7 @@
 # crackmon
 Hashcat wrapper tool to bypass current attack if crack rate drops below threshold.
 
-Inspiration by: https://github.com/justpretending/avgdrop
+Inspiration by: https://launchpad.net/avgdrop
 
 ### Usage:
 Default: -time 1m -crack 1
