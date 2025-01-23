@@ -5,7 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
+	"time"
 )
 
 /*
@@ -13,9 +15,10 @@ GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 https://github.com/cyclone-github/crackmon/blob/main/LICENSE
 
 crackmon - by cyclone
-original idea by: https://github.com/justpretending/avgdrop
+original idea by: https://launchpad.net/avgdrop
 hashcat wrapper tool to simulate pressing "b" key to bypass current hashcat attack if cracking rate goes below threshold
-developed and tested on debian 12 linux
+developed on debian 12 linux, tested on debian 12 and windows 11
+designed for running hashcat attacks -a 0/1/9 and does not fully support any mask mode such as -a 3/6/7
 
 example:
 ./crackmon ./hashcat {hashcat args} 				(defaults to -time 1m -crack 1)
@@ -25,34 +28,62 @@ example:
 -c (total cracks)		= cumulative average cracks threshold
 
 version:
-v2023-10-01.1700; initial github release
-v2023-10-02.1030-debug; fixed timeT; added more debugging info
-v2023-10-04.1545-winpty; added pty support for windows; debug flag; changed CUR to AVG
-v2023-10-07.1520-pty; refactored code, added logic for hashcat Paused, Running and Stopped status, added support for user sending commands to hashcat
-v2023-10-13.1445; fixed https://github.com/cyclone-github/crackmon/issues/4; refactored sendX commands
+v2023-10-01.1700
+	initial github release
+v2023-10-02.1030-debug
+	fixed timeT
+	added more debugging info
+v2023-10-04.1545-winpty
+	added pty support for windows
+	debug flag
+	changed CUR to AVG
+v2023-10-07.1520-pty
+	refactored code
+	added logic for hashcat Paused, Running and Stopped status
+	added support for user sending commands to hashcat
+v2023-10-13.1445
+	fixed https://github.com/cyclone-github/crackmon/issues/4
+	refactored sendX commands
+v0.2.0, 2025-01-23
+	fixed https://github.com/cyclone-github/crackmon/issues/7
+	updated versioning
+	add warnings if using unsupported hashcat attack or flag
 */
 
 func help() {
-	fmt.Fprint(os.Stderr, `Examples:
+	fmt.Fprintln(os.Stderr, `Examples:
 
-(Defaults to -time 1m -crack 1)
+Defaults to -time 1m -crack 1
 ./crackmon ./hashcat {hashcat args}
 
 Custom: -time 5m -crack 100
 ./crackmon -t 5 -c 100 ./hashcat {hashcat args}
 
 All flags:
-	-t      	minimum runtime in minutes
-	-c      	cumulative average cracks threshold
-	-debug  	enable debug output
-	-help   	show this help menu
-	-version	show version info
-`)
+	-t         minimum runtime in minutes
+	-c         cumulative average cracks threshold
+	-debug     enable debug output
+	-help      show this help menu
+	-version   show version info
+
+Supported hashcat attacks:
+	-a 0       straight
+	-a 1       combination
+	-a 9       associated
+
+Partially supported hashcat attacks:
+	-a 3       mask
+	-a 6       hybrid
+	-a 7       hybrid
+
+Unsupported hashcat flags:
+	-i         incremental
+	--status-json`)
 }
 
 // version func
 func version(debug bool) {
-	fmt.Fprintln(os.Stderr, "crackmon 2023-10-13.1445")
+	fmt.Fprintln(os.Stderr, "crackmon v0.2.0, 2025-01-23")
 	fmt.Fprintln(os.Stderr, "https://github.com/cyclone-github/crackmon")
 	if debug {
 		detectedOS := checkOS()
@@ -89,6 +120,7 @@ func main() {
 	}
 
 	if *helpFlag {
+		version(*debugFlag)
 		help()
 		os.Exit(0)
 	}
@@ -124,6 +156,20 @@ func main() {
 	if strings.Contains(strings.ToLower(cmdStr), "--status-json") {
 		fmt.Fprintln(os.Stderr, "\nWarning: --status-json is not allowed. Removing flag.")
 		cmdStr = strings.ReplaceAll(cmdStr, "--status-json", "")
+	}
+
+	modeRe := regexp.MustCompile(`-a\s*([367])`)
+	if modeRe.MatchString(strings.ToLower(cmdStr)) {
+		if strings.Contains(strings.ToLower(cmdStr), "-i") {
+			fmt.Fprintln(os.Stderr, "\nWarning: crackmon does not support incremental mode.")
+			os.Exit(1)
+		}
+		fmt.Fprintln(os.Stderr, "\nWarning: crackmon does not fully support mask or hybrid attacks.\n")
+		for i := 5; i > 0; i-- {
+			fmt.Fprintf(os.Stderr, "Continuing in %d seconds...\r", i)
+			time.Sleep(1 * time.Second)
+		}
+		fmt.Fprintln(os.Stderr)
 	}
 	if !strings.Contains(strings.ToLower(cmdStr), "--status") {
 		cmdStr += " --status"

@@ -14,7 +14,8 @@ import (
 
 /*
 v2023-10-07.1520
-v2023-10-13.1445; refactored sendX commands
+v2023-10-13.1445
+	refactored sendX commands
 */
 
 var cptyInstance *conpty.ConPty

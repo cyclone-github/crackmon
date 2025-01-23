@@ -16,8 +16,13 @@ import (
 
 /*
 v2023-10-07.1520
-v2023-10-08.0930; fixed https://github.com/cyclone-github/crackmon/issues/3
-v2023-10-13.1445; fixed https://github.com/cyclone-github/crackmon/issues/4; refactored sendX commands
+v2023-10-08.0930
+	fixed https://github.com/cyclone-github/crackmon/issues/3
+v2023-10-13.1445
+	fixed https://github.com/cyclone-github/crackmon/issues/4
+	refactored sendX commands
+v0.2.0, 2025-01-23
+	fixed https://github.com/cyclone-github/crackmon/issues/7
 */
 
 func ReadUserInput(stdin io.Writer) {
@@ -71,12 +76,15 @@ func initializeAndExecuteCommon(cmdStr string, timeT int, crackT int, debug bool
 		cumulativeAvg    float64
 		totalCracks      int
 		totalTime        float64
+		initialRecovered int
+		baselineSet      bool
 	)
 	// regex for reading hc stdout
 	runningRe := regexp.MustCompile(`Status\.+: Running`)
 	pausedRe := regexp.MustCompile(`Status\.+: Paused`)
 	stoppedRe := regexp.MustCompile(`Stopped:`)
 	recoveredRe := regexp.MustCompile(`Recovered[.]+:\s*(\d+)`)
+	removedRe := regexp.MustCompile(`INFO: Removed (\d+) hashes`)
 	dictCacheRe := regexp.MustCompile(`Dictionary cache building`)
 	invalidArgRe := regexp.MustCompile(`Invalid argument specified.`)
 
@@ -137,16 +145,32 @@ func initializeAndExecuteCommon(cmdStr string, timeT int, crackT int, debug bool
 						stdoutStatus = "OK"
 						missedChecks = 0
 					}
+
+					// set baseline zero from "INFO: Removed" line
+					removedT := removedRe.FindStringSubmatch(line)
+					if len(removedT) >= 2 && !baselineSet {
+						initialRecovered, _ = strconv.Atoi(removedT[1])
+						baselineSet = true
+						if debug {
+							fmt.Fprintf(os.Stderr, "DEBUG: Baseline zero set from INFO: Removed: %d\n", initialRecovered)
+						}
+					}
 					// check founds total
 					recoveredT := recoveredRe.FindStringSubmatch(line)
 					if len(recoveredT) >= 2 && hashcatRunning && !hashcatPaused {
-						totalCracks, _ = strconv.Atoi(recoveredT[1])
+						currentRecovered, _ := strconv.Atoi(recoveredT[1])
+
+						actualRecovered := currentRecovered
+						if baselineSet {
+							actualRecovered -= initialRecovered
+						}
+
 						totalTime = time.Since(hashcatStartTime).Seconds()
 						stdoutStatus = "OK"
 
 						// cumulative average, total cracks / total time (same as hashcat's AVG)
 						if totalTime > 60 {
-							cumulativeAvg = float64(totalCracks) / totalTime * 60
+							cumulativeAvg = float64(actualRecovered) / totalTime * 60
 						}
 
 						// sendB if -c threshold is not met within -t threshold
