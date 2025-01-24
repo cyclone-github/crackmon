@@ -9,8 +9,6 @@
 # crackmon
 Hashcat wrapper tool to bypass current attack if crack rate drops below threshold.
 
-Inspiration by: https://launchpad.net/avgdrop
-
 ### Usage:
 Default: -time 1m -crack 1
 ```
@@ -50,20 +48,20 @@ Partially supported hashcat attacks:
 
 Unsupported hashcat flags:
 	-i         incremental
-	--status-json`)
+	--status-json
 ```
-
-Designed for running hashcat attacks `-a 0, 1, 9`. Supports `-a 3, 6, 7`, but does not currently support hashcat mask files or `-incremental` due to how hashcat handles sessions when running -i or mask files.
 
 For troubleshooting, run with -debug flag
 ```
 ./crackmon -debug ./hashcat...
 ```
+### Notes:
+- Compiled and tested on debian 12 and Windows 11 Terminal
+- Designed for running hashcat attacks `-a 0, 1, 9`. 
+- Supports `-a 3, 6, 7`, but does not currently support hashcat mask files or `-incremental` due to how hashcat handles sessions when running -i or mask files.
 ### Changelog:
 https://github.com/cyclone-github/crackmon/blob/main/CHANGELOG.md
 
-### Notes:
-- Compiled and tested on debian 12 and Windows 11 Terminal
 
 ### Compile from source:
 - If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
