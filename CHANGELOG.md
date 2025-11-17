@@ -1,3 +1,9 @@
+### v0.3.0, 2025-11-17
+```
+added beta support for mdxfind: https://github.com/cyclone-github/crackmon/issues/5
+clean up code
+add mutex to protect debug fields
+```
 ### v0.2.0, 2025-01-23
 ```
 fixed https://github.com/cyclone-github/crackmon/issues/7

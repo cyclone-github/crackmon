@@ -10,14 +10,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/creack/pty" // used for sending user keyboard commands to hashcat
+	"github.com/creack/pty" // used for sending user keyboard commands to hashcat/mdxfind
 )
-
-/*
-v2023-10-07.1520
-v2023-10-13.1445
-	refactored sendX commands
-*/
 
 // sendX func
 func linuxSendCmd(cmd string, stdin io.Writer) {
@@ -31,19 +25,32 @@ func initializeAndExecute(cmdStr string, timeT int, crackT int, debug bool) {
 	cmdArgs := cmdSlice[1:]
 
 	cmd := exec.Command(cmdName, cmdArgs...)
-	ptmx, err := pty.Start(cmd) // start hashcat command with pty
+	ptmx, err := pty.Start(cmd) // start command with pty
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error starting command with PTY:", err)
 		return
 	}
 	defer func() { _ = ptmx.Close() }() // close pty
 
-	sendB = func(stdin io.Writer) { linuxSendCmd("b", stdin) }
-	sendQ = func(stdin io.Writer) { linuxSendCmd("q", stdin) }
+	// Runner-specific sendB / sendQ behavior
+	switch currentRunner {
+	case RunnerHashcat:
+		// hashcat: "b" to bypass, "q" to quit
+		sendB = func(stdin io.Writer) { linuxSendCmd("b", stdin) }
+		sendQ = func(stdin io.Writer) { linuxSendCmd("q", stdin) }
+	case RunnerMDXFind:
+		// mdxfind: no bypass/quit keys; use Ctrl+C for both
+		sendB = func(stdin io.Writer) { linuxSendCmd("\x03", stdin) } // Ctrl+C
+		sendQ = func(stdin io.Writer) { linuxSendCmd("\x03", stdin) } // Ctrl+C
+	default:
+		// fail-safe: use Ctrl+C if Runner unknown
+		sendB = func(stdin io.Writer) { linuxSendCmd("\x03", stdin) }
+		sendQ = func(stdin io.Writer) { linuxSendCmd("\x03", stdin) }
+	}
 
 	// listen for user commands
 	go ReadUserInput(ptmx)
 
 	// initialize common logic
-	initializeAndExecuteCommon(cmdStr, timeT, crackT, debug, ptmx, ptmx, checkOS)
+	initializeAndExecuteCommon(timeT, crackT, debug, ptmx, ptmx)
 }
