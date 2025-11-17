@@ -180,17 +180,11 @@ func initializeAndExecuteCommon(timeT int, crackT int, debug bool, stdin io.Writ
 							totalTime = time.Since(hashcatStartTime).Seconds()
 
 							// cumulative average, total cracks / total time (same as hashcat's AVG)
-							if totalTime > 60 {
-								cumulativeAvg = float64(actualRecovered) / totalTime * 60
-							}
-
-							// recovered minus existing founds in potfile
-							totalCracks = actualRecovered
-
-							// update debug-visible fields
 							statsMu.Lock()
 							stdoutStatus = "OK"
+							totalCracks = actualRecovered
 							if totalTime > 60 {
+								cumulativeAvg = float64(actualRecovered) / totalTime * 60
 							}
 							statsMu.Unlock()
 
@@ -232,15 +226,13 @@ func initializeAndExecuteCommon(timeT int, crackT int, debug bool, stdin io.Writ
 							}
 							totalTime = time.Since(mdxStartTime).Seconds()
 
-							if totalTime > 0 {
-								cumulativeAvg = float64(actualFound) / totalTime * 60
-							}
-
-							totalCracks = actualFound
-
 							// update debug-visible fields
 							statsMu.Lock()
 							stdoutStatus = "OK"
+							totalCracks = actualFound
+							if totalTime > 0 {
+								cumulativeAvg = float64(actualFound) / totalTime * 60
+							}
 							statsMu.Unlock()
 
 							if totalTime >= float64(timeT*60) {
