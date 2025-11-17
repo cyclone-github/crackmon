@@ -61,7 +61,7 @@ func initializeAndExecute(cmdStr string, timeT int, crackT int, debug bool) {
 	case RunnerMDXFind:
 		// mdxfind: no bypass/quit keys; use Ctrl+C / cpty close instead
 		sendB = func(stdin io.Writer) {
-			fmt.Println("Sending bypass signal...")
+			fmt.Println("Sending quit signal...")
 			windowsSendRaw([]byte{0x03}) // Ctrl+C doesn't work as expected on windows
 			cptyInstance.Close()         // close cpty
 			time.Sleep(1 * time.Second)
@@ -77,7 +77,7 @@ func initializeAndExecute(cmdStr string, timeT int, crackT int, debug bool) {
 	default:
 		// fail-safe: use Ctrl+C
 		sendB = func(_ io.Writer) {
-			fmt.Println("Sending bypass signal...")
+			fmt.Println("Sending quit signal...")
 			windowsSendRaw([]byte{0x03}) // Ctrl+C doesn't work as expected on windows
 			cptyInstance.Close()         // close cpty
 			time.Sleep(1 * time.Second)

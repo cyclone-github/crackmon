@@ -41,11 +41,15 @@ func initializeAndExecute(cmdStr string, timeT int, crackT int, debug bool) {
 	case RunnerMDXFind:
 		// mdxfind: no bypass/quit keys; use Ctrl+C for both
 		sendB = func(stdin io.Writer) { linuxSendCmd("\x03", stdin) } // Ctrl+C
+		fmt.Println("Sending quit signal...")
 		sendQ = func(stdin io.Writer) { linuxSendCmd("\x03", stdin) } // Ctrl+C
+		fmt.Println("Sending quit signal...")
 	default:
 		// fail-safe: use Ctrl+C if Runner unknown
 		sendB = func(stdin io.Writer) { linuxSendCmd("\x03", stdin) }
+		fmt.Println("Sending quit signal...")
 		sendQ = func(stdin io.Writer) { linuxSendCmd("\x03", stdin) }
+		fmt.Println("Sending quit signal...")
 	}
 
 	// listen for user commands
