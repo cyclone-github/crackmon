@@ -1,4 +1,4 @@
-[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=crackmon&theme=gruvbox)](https://github.com/cyclone-github/crackmon/)
+[![Readme Card](https://github-readme-stats-fast.vercel.app/api/pin/?username=cyclone-github&repo=crackmon&theme=gruvbox)](https://github.com/cyclone-github/crackmon/)
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/cyclone-github/crackmon)](https://goreportcard.com/report/github.com/cyclone-github/crackmon)
 [![GitHub issues](https://img.shields.io/github/issues/cyclone-github/crackmon.svg)](https://github.com/cyclone-github/crackmon/issues)
@@ -59,15 +59,21 @@ For troubleshooting, run with -debug flag
 ```
 ./crackmon -debug ./hashcat...
 ```
+
+### Install latest release:
+```
+go install github.com/cyclone-github/crackmon@latest
+```
+### Install from latest source code (bleeding edge):
+```
+go install github.com/cyclone-github/crackmon@main
+```
+
 ### Notes:
 - Developed and tested on debian 12/13 and Windows 11 Terminal
 - Designed for running hashcat attacks `-a 0, 1, 9`. 
 - Supports `-a 3, 6, 7`, but does not currently support hashcat mask files or `-incremental` due to how hashcat handles sessions when running -i or mask files.
 - Crackmon v0.3.0 added beta support for mdxfind.
+
 ### Changelog:
 https://github.com/cyclone-github/crackmon/blob/main/CHANGELOG.md
-
-### Install latest release:
-- `go install github.com/cyclone-github/crackmon@latest`
-### Install from latest source code (bleeding edge):
-- `go install github.com/cyclone-github/crackmon@main`
